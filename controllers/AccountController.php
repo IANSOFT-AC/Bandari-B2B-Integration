@@ -86,6 +86,20 @@ class AccountController extends RestController
         $params = Yii::$app->request->getBodyParam('TransactionReferenceCode');
 
         // Fetch the user from Nav
+        $service = Yii::$app->params['ServiceName']['CoopB2B'];
+        $NavPayload = [
+            'transactionReferenceCode' => $params,
+            'transactionDate' => Yii::$app->request->getBodyParam('TransactionDate'),
+            'accountNumber' => '',
+            'accountName' => '',
+            'institutionCode' => Yii::$app->request->getBodyParam('InstitutionCode'),
+            'institutionName' => ''
+         ];
+        $member = Yii::$app->navhelper->Codeunit($service,$NavPayload,'GetAccountValidation');
+
+        print_r('<pre>');
+        print_r($member);
+        exit;
         
         return [
             'TransactionReferenceCode' => Yii::$app->request->getBodyParam('TransactionReferenceCode'),

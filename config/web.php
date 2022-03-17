@@ -57,6 +57,15 @@ $config = [
             'rules' => [
             ],
         ],
+
+        
+		'navhelper' => [
+            'class' => 'app\Library\Navhelper'
+        ],
+
+        'navision' => [
+            'class' => 'app\Library\Navision'
+        ],
         
     ],
     'params' => $params,
