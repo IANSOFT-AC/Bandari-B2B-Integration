@@ -97,21 +97,29 @@ class AccountController extends RestController
          ];
         $member = Yii::$app->navhelper->Codeunit($service,$NavPayload,'GetAccountValidation');
 
-        print_r('<pre>');
-        print_r($member);
-        exit;
-        
-        return [
-            'TransactionReferenceCode' => Yii::$app->request->getBodyParam('TransactionReferenceCode'),
-            'TransactionDate' => Yii::$app->request->getBodyParam('TransactionDate'),
-            'TotalAmount' => '0.00',
-            'Currency' => '',
-            'AdditionalInfo' => '', //From Nav,
-            'AccountNumber' => '', //FROM NAV
-            'AccountName' => '', //FROM NAV
-            'InstitutionCode' => Yii::$app->request->getBodyParam('InstitutionCode'),//
-            'InstitutionName' => $headers['serviceName']
-        ];
+        //print_r('<pre>');
+        //print_r($member);
+        //exit;
+        if(is_array($member) && $member['accountNumber']){
+            return [
+                'TransactionReferenceCode' => Yii::$app->request->getBodyParam('TransactionReferenceCode'),
+                'TransactionDate' => Yii::$app->request->getBodyParam('TransactionDate'),
+                'TotalAmount' => '0.00',
+                'Currency' => '',
+                'AdditionalInfo' => '', //From Nav,
+                'AccountNumber' => $member['accountNumber'], //FROM NAV
+                'AccountName' => $member['accountName'], //FROM NAV
+                'InstitutionCode' => $member['institutionCode'],//
+                'InstitutionName' => $member['institutionName']
+            ];
+        }
+        else{
+            return [
+                'Error' => true,
+                'Message' => 'Cannot Validate Account Details'
+            ];
+        }
+       
     }
 
     

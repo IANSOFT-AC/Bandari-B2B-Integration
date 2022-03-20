@@ -86,9 +86,31 @@ class AdviceController extends RestController
         $params = Yii::$app->request->getBodyParams();
 
         // Post Advice To Nav
-        
+        $service = Yii::$app->params['ServiceName']['CoopB2B'];
+        $payload = [
+            'transactionReferenceCode' => $params['request']['TransactionReferenceCode'],
+            'transactionDate' => $params['request']['TransactionDate'],
+            'totalAmount' => $params['request']['TotalAmount'],
+            'currency' => $params['request']['Currency'],
+            'documentReferenceNumber' => $params['request']['DocumentReferenceNumber'],
+            'bankCode' => $params['request']['BankCode'],
+            'branchCode' => $params['request']['BranchCode'],
+            'paymentDate' => $params['request']['PaymentDate'],
+            'paymentReferenceCode' => $params['request']['PaymentReferenceCode'],
+            'paymentCode' => $params['request']['PaymentCode'],
+            'paymentMode' => $params['request']['PaymentMode'],
+            'paymentAmount' => $params['request']['PaymentAmount'],
+            'accountNumber' => $params['request']['AccountNumber'],
+            'accountName' => $params['request']['AccountName'],
+            'institutionCode' => $params['request']['InstitutionCode'],
+            'institutionName' => $params['request']['InstitutionName']
+        ];
+
+        $advice = Yii::$app->navhelper->Codeunit($service,$payload,'SendAccountPaymentAdvice');
+
+        //return $payload;
         return [
-            'data' => $params,
+            $advice,
         ];
     }
 
