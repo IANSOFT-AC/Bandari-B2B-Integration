@@ -48,7 +48,7 @@ class AdviceController extends RestController
             'basicAuth' => [
                 'class' => HttpBasicAuth::class,
                 'auth' => function($username, $password) {
-                    if(Yii::$app->request->headers['connectionID'] === 'bandari' && Yii::$app->request->headers['connectionPassword'] == 'bandari123'){
+                    if(Yii::$app->request->getBodyParam('header')['connectionID'] === 'bandari' && Yii::$app->request->getBodyParam('header')['connectionPassword'] == 'bandari123'){
                         return new User();
                     }else{
                         return null;

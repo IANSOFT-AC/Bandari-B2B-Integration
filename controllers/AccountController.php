@@ -48,7 +48,7 @@ class AccountController extends RestController
             'basicAuth' => [
                 'class' => HttpBasicAuth::class,
                 'auth' => function($username, $password) {
-                    if(Yii::$app->request->headers['connectionID'] === 'bandari' && Yii::$app->request->headers['connectionPassword'] == 'bandari123'){
+                    if(Yii::$app->request->getBodyParam('header')['connectionID'] === 'bandari' && Yii::$app->request->getBodyParam('header')['connectionPassword'] == 'bandari123'){
                         return new User();
                     }else{
                         return null;
@@ -82,6 +82,11 @@ class AccountController extends RestController
      */
     public function actionIndex()
     {
+        //$ConnectionID = Yii::$app->request->getBodyParam('header')['connectionID'];
+        //$ConnectionPassword = Yii::$app->request->getBodyParam('header')['connectionPassword'];
+
+
+
         $headers = Yii::$app->request->headers;
         $params = Yii::$app->request->getBodyParam('TransactionReferenceCode');
 
@@ -97,9 +102,9 @@ class AccountController extends RestController
          ];
         $member = Yii::$app->navhelper->Codeunit($service,$NavPayload,'GetAccountValidation');
 
-        //print_r('<pre>');
-        //print_r($member);
-        //exit;
+       /* print_r('<pre>');
+        print_r($member);
+        exit;*/
         if(is_array($member) && $member['accountNumber']){
             return [
                 'TransactionReferenceCode' => Yii::$app->request->getBodyParam('TransactionReferenceCode'),
