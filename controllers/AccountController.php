@@ -46,7 +46,7 @@ class AccountController extends RestController
                 ],
             ],
 
-           /* 'basicAuth' => [
+            /* 'basicAuth' => [
                 'class' => HttpBasicAuth::class,
                 'auth' => function ($username, $password) {
 
@@ -119,8 +119,6 @@ class AccountController extends RestController
         } else {
             return new HttpException('Unauthorized', 401);
         }
-
-
     }
 
 
