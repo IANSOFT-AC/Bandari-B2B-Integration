@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\HttpException;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
@@ -24,7 +25,7 @@ class AdviceController extends RestController
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout','index'],
+                'only' => ['logout', 'index'],
                 'rules' => [
                     [
                         'actions' => ['logout'],
@@ -45,16 +46,16 @@ class AdviceController extends RestController
                 ],
             ],
 
-            'basicAuth' => [
+            /*'basicAuth' => [
                 'class' => HttpBasicAuth::class,
-                'auth' => function($username, $password) {
-                    if(Yii::$app->request->getBodyParam('header')['connectionID'] === 'bandari' && Yii::$app->request->getBodyParam('header')['connectionPassword'] == 'bandari123'){
+                'auth' => function ($username, $password) {
+                    if (Yii::$app->request->getBodyParam('header')['connectionID'] == 'bandari' && Yii::$app->request->getBodyParam('header')['connectionPassword'] == 'bandari123') {
                         return new User();
-                    }else{
+                    } else {
                         return null;
                     }
                 }
-            ],
+            ],*/
             'contentNegotiator' => [
                 'class' => ContentNegotiator::class,
                 'only' => ['index'],
@@ -72,7 +73,6 @@ class AdviceController extends RestController
      */
     public function actions()
     {
-        
     }
 
     /**
@@ -82,39 +82,44 @@ class AdviceController extends RestController
      */
     public function actionIndex()
     {
-        $headers = Yii::$app->request->headers;
-        $params = Yii::$app->request->getBodyParams();
+        if (Yii::$app->request->getBodyParam('header')['connectionID'] == 'bandari' && Yii::$app->request->getBodyParam('header')['connectionPassword'] == 'bandari123') {
+            $params = Yii::$app->request->getBodyParams();
 
-        // Post Advice To Nav
-        $service = Yii::$app->params['ServiceName']['CoopB2B'];
-        $payload = [
-            'transactionReferenceCode' => $params['request']['TransactionReferenceCode'],
-            'transactionDate' => $params['request']['TransactionDate'],
-            'totalAmount' => $params['request']['TotalAmount'],
-            'currency' => $params['request']['Currency'],
-            'documentReferenceNumber' => $params['request']['DocumentReferenceNumber'],
-            'bankCode' => $params['request']['BankCode'],
-            'branchCode' => $params['request']['BranchCode'],
-            'paymentDate' => $params['request']['PaymentDate'],
-            'paymentReferenceCode' => $params['request']['PaymentReferenceCode'],
-            'paymentCode' => $params['request']['PaymentCode'],
-            'paymentMode' => $params['request']['PaymentMode'],
-            'paymentAmount' => $params['request']['PaymentAmount'],
-            'accountNumber' => $params['request']['AccountNumber'],
-            'accountName' => $params['request']['AccountName'],
-            'institutionCode' => $params['request']['InstitutionCode'],
-            'institutionName' => $params['request']['InstitutionName']
-        ];
+            // Post Advice To Nav
+            $service = Yii::$app->params['ServiceName']['CoopB2B'];
+            $payload = [
+                'transactionReferenceCode' => $params['request']['TransactionReferenceCode'],
+                'transactionDate' => $params['request']['TransactionDate'],
+                'totalAmount' => $params['request']['TotalAmount'],
+                'currency' => $params['request']['Currency'],
+                'documentReferenceNumber' => $params['request']['DocumentReferenceNumber'],
+                'bankCode' => $params['request']['BankCode'],
+                'branchCode' => $params['request']['BranchCode'],
+                'paymentDate' => $params['request']['PaymentDate'],
+                'paymentReferenceCode' => $params['request']['PaymentReferenceCode'],
+                'paymentCode' => $params['request']['PaymentCode'],
+                'paymentMode' => $params['request']['PaymentMode'],
+                'paymentAmount' => $params['request']['PaymentAmount'],
+                'accountNumber' => $params['request']['AccountNumber'],
+                'accountName' => $params['request']['AccountName'],
+                'institutionCode' => $params['request']['InstitutionCode'],
+                'institutionName' => $params['request']['InstitutionName']
+            ];
 
-        $advice = Yii::$app->navhelper->Codeunit($service,$payload,'SendAccountPaymentAdvice');
+            $advice = Yii::$app->navhelper->Codeunit($service, $payload, 'SendAccountPaymentAdvice');
 
-        //return $payload;
-        return [
-            $advice,
-        ];
+            //return $payload;
+            return [
+                $advice,
+            ];
+        } else {
+            return new HttpException('Unauthorized', 401);
+        }
+
+
     }
 
-    
+
 
     /**
      * Login action.
