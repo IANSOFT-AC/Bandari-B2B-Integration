@@ -24,7 +24,7 @@ class AccountController extends RestController
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout','index'],
+                'only' => ['logout', 'index'],
                 'rules' => [
                     [
                         'actions' => ['logout'],
@@ -47,10 +47,10 @@ class AccountController extends RestController
 
             'basicAuth' => [
                 'class' => HttpBasicAuth::class,
-                'auth' => function($username, $password) {
-                    if(Yii::$app->request->getBodyParam('header')['connectionID'] === 'bandari' && Yii::$app->request->getBodyParam('header')['connectionPassword'] == 'bandari123'){
+                'auth' => function ($username, $password) {
+                    if (Yii::$app->request->getBodyParam('header')['connectionID'] === 'bandari' && Yii::$app->request->getBodyParam('header')['connectionPassword'] == 'bandari123') {
                         return new User();
-                    }else{
+                    } else {
                         return null;
                     }
                 }
@@ -72,7 +72,6 @@ class AccountController extends RestController
      */
     public function actions()
     {
-        
     }
 
     /**
@@ -84,7 +83,7 @@ class AccountController extends RestController
     {
         //$ConnectionID = Yii::$app->request->getBodyParam('header')['connectionID'];
         //$ConnectionPassword = Yii::$app->request->getBodyParam('header')['connectionPassword'];
-
+        //$ConnectionPassword = Yii::$app->request->getBodyParam('request');
 
 
         $headers = Yii::$app->request->headers;
@@ -93,19 +92,19 @@ class AccountController extends RestController
         // Fetch the user from Nav
         $service = Yii::$app->params['ServiceName']['CoopB2B'];
         $NavPayload = [
-            'transactionReferenceCode' => $params,
-            'transactionDate' => Yii::$app->request->getBodyParam('TransactionDate'),
+            'transactionReferenceCode' => Yii::$app->request->getBodyParam('request')['TransactionReferenceCode'],
+            'transactionDate' => Yii::$app->request->getBodyParam('request')['TransactionDate'],
             'accountNumber' => '',
             'accountName' => '',
-            'institutionCode' => Yii::$app->request->getBodyParam('InstitutionCode'),
+            'institutionCode' => Yii::$app->request->getBodyParam('request')['InstitutionCode'],
             'institutionName' => ''
-         ];
-        $member = Yii::$app->navhelper->Codeunit($service,$NavPayload,'GetAccountValidation');
+        ];
+        $member = Yii::$app->navhelper->Codeunit($service, $NavPayload, 'GetAccountValidation');
 
-       /* print_r('<pre>');
+        /* print_r('<pre>');
         print_r($member);
         exit;*/
-        if(is_array($member) && $member['accountNumber']){
+        if (is_array($member) && $member['accountNumber']) {
             return [
                 'TransactionReferenceCode' => Yii::$app->request->getBodyParam('TransactionReferenceCode'),
                 'TransactionDate' => Yii::$app->request->getBodyParam('TransactionDate'),
@@ -114,20 +113,18 @@ class AccountController extends RestController
                 'AdditionalInfo' => '', //From Nav,
                 'AccountNumber' => $member['accountNumber'], //FROM NAV
                 'AccountName' => $member['accountName'], //FROM NAV
-                'InstitutionCode' => $member['institutionCode'],//
+                'InstitutionCode' => $member['institutionCode'], //
                 'InstitutionName' => $member['institutionName']
             ];
-        }
-        else{
+        } else {
             return [
                 'Error' => true,
                 'Message' => 'Cannot Validate Account Details'
             ];
         }
-       
     }
 
-    
+
 
     /**
      * Login action.
