@@ -12,7 +12,10 @@ use app\models\ContactForm;
 use app\models\User;
 use yii\filters\auth\HttpBasicAuth;
 use yii\filters\ContentNegotiator;
+use yii\helpers\Html;
 use yii\rest\Controller as RestController;
+use yii\web\HttpException;
+
 
 class AccountController extends RestController
 {
@@ -24,7 +27,7 @@ class AccountController extends RestController
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout','index'],
+                'only' => ['logout', 'index'],
                 'rules' => [
                     [
                         'actions' => ['logout'],
@@ -45,16 +48,16 @@ class AccountController extends RestController
                 ],
             ],
 
-            'basicAuth' => [
+            /* 'basicAuth' => [
                 'class' => HttpBasicAuth::class,
-                'auth' => function($username, $password) {
-                    if(Yii::$app->request->headers['connectionID'] === 'bandari' && Yii::$app->request->headers['connectionPassword'] == 'bandari123'){
+                'auth' => function ($username, $password) {
+                    if (Yii::$app->request->getBodyParam('header')['connectionID'] === 'bandari' && Yii::$app->request->getBodyParam('header')['connectionPassword'] == 'bandari123') {
                         return new User();
-                    }else{
+                    } else {
                         return null;
                     }
                 }
-            ],
+            ],*/
             'contentNegotiator' => [
                 'class' => ContentNegotiator::class,
                 'only' => ['index'],
@@ -72,7 +75,6 @@ class AccountController extends RestController
      */
     public function actions()
     {
-        
     }
 
     /**
@@ -82,47 +84,100 @@ class AccountController extends RestController
      */
     public function actionIndex()
     {
+
         $headers = Yii::$app->request->headers;
-        $params = Yii::$app->request->getBodyParam('TransactionReferenceCode');
+        $params = Yii::$app->request->getBodyParams();
 
-        // Fetch the user from Nav
-        $service = Yii::$app->params['ServiceName']['CoopB2B'];
-        $NavPayload = [
-            'transactionReferenceCode' => $params,
-            'transactionDate' => Yii::$app->request->getBodyParam('TransactionDate'),
-            'accountNumber' => '',
-            'accountName' => '',
-            'institutionCode' => Yii::$app->request->getBodyParam('InstitutionCode'),
-            'institutionName' => ''
-         ];
-        $member = Yii::$app->navhelper->Codeunit($service,$NavPayload,'GetAccountValidation');
+        /* print_r('<pre>');
+        print_r($params);
+        exit('End');*/
 
-        //print_r('<pre>');
-        //print_r($member);
-        //exit;
-        if(is_array($member) && $member['accountNumber']){
-            return [
-                'TransactionReferenceCode' => Yii::$app->request->getBodyParam('TransactionReferenceCode'),
-                'TransactionDate' => Yii::$app->request->getBodyParam('TransactionDate'),
-                'TotalAmount' => '0.00',
-                'Currency' => '',
-                'AdditionalInfo' => '', //From Nav,
-                'AccountNumber' => $member['accountNumber'], //FROM NAV
-                'AccountName' => $member['accountName'], //FROM NAV
-                'InstitutionCode' => $member['institutionCode'],//
-                'InstitutionName' => $member['institutionName']
+        if ($params['header']['connectionID'] == 'mhasibu' &&  $params['header']['connectionPassword'] == 'mhasibu123') {
+            // Fetch the user from Nav
+            $service = Yii::$app->params['ServiceName']['CreditPortalManagement'];
+            $NavPayload = [
+                'transactionReferenceCode' => $params['request']['TransactionReferenceCode'],
+                'transactionDate' => Html::encode($params['request']['TransactionDate']),
+                'accountNumber' => '',
+                'accountName' => '',
+                'institutionCode' => $params['request']['InstitutionCode'],
+                'institutionName' => ''
             ];
-        }
-        else{
-            return [
-                'Error' => true,
-                'Message' => 'Cannot Validate Account Details'
+            $member = Yii::$app->navhelper->Codeunit($service, $NavPayload, 'GetAccountValidation');
+
+            //print_r($member);exit;
+            if (is_array($member) && $member['accountNumber']) {
+                $response =  [
+                    'header' => [
+                        'messageID' =>  Yii::$app->security->generateRandomString(8),
+                        'statusCode' => 200,
+                        'statusDescription' => 'Successfully validated Member',
+                    ],
+                    'response' => [
+                        'TransactionReferenceCode' => $params['request']['TransactionReferenceCode'],
+                        'TransactionDate' => $params['request']['TransactionDate'],
+                        'TotalAmount' => '0.00',
+                        'Currency' => '',
+                        'AdditionalInfo' => '', //From Nav,
+                        'AccountNumber' => $member['accountNumber'], //FROM NAV
+                        'AccountName' => $member['accountName'], //FROM NAV
+                        'InstitutionCode' => $member['institutionCode'], //
+                        'InstitutionName' => $member['institutionName']
+                    ]
+                ];
+                $this->logger($response, 'account');
+                return $response;
+            } else {
+                $response =  [
+                    'header' => [
+                        'messageID' =>  Yii::$app->security->generateRandomString(8),
+                        'statusCode' => 404,
+                        'statusDescription' => 'Could not Validate  Member',
+                    ],
+                    'response' => [
+                        'TransactionReferenceCode' => $params['request']['TransactionReferenceCode'],
+                        'TransactionDate' => $params['request']['TransactionDate'],
+                        'TotalAmount' => '0.00',
+                        'Currency' => '',
+                        'AdditionalInfo' => '', //From Nav,
+                        'AccountNumber' => '', //FROM NAV
+                        'AccountName' => '', //FROM NAV
+                        'InstitutionCode' => '', //
+                        'InstitutionName' => '',
+                        'member' => $member
+                    ]
+                ];
+
+                $this->logger($response, 'account');
+                return $response;
+            }
+        } else {
+            $response = [
+                'header' => [
+                    'messageID' =>  Yii::$app->security->generateRandomString(8),
+                    'statusCode' => 401,
+                    'statusDescription' => 'Unauthorized.',
+                ],
+                'response' => [
+                    'TransactionReferenceCode' => $params['request']['TransactionReferenceCode'],
+                    'TransactionDate' => $params['request']['TransactionDate'],
+                    'TotalAmount' => '0.00',
+                    'Currency' => '',
+                    'AdditionalInfo' => '', //From Nav,
+                    'AccountNumber' => '', //FROM NAV
+                    'AccountName' => '', //FROM NAV
+                    'InstitutionCode' => '', //
+                    'InstitutionName' => '',
+                    'Error' => 'Unauthorized'
+                ]
             ];
+
+            $this->logger($response, 'account');
+            return $response;
         }
-       
     }
 
-    
+
 
     /**
      * Login action.
@@ -184,5 +239,19 @@ class AccountController extends RestController
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    private function logger($message, $type)
+    {
+        if ($type == 'advice') {
+            $filename = 'log/advice.log';
+        } elseif ($type == 'account') {
+            $filename = 'log/account.log';
+        }
+
+        $req_dump = print_r($message, TRUE);
+        $fp = fopen($filename, 'a');
+        fwrite($fp, $req_dump);
+        fclose($fp);
     }
 }

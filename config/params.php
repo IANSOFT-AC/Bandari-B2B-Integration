@@ -15,14 +15,14 @@ return [
     'DBCompanyName' => env('NAV_DB_COMPANY'),
 
 
-    'ldPrefix'=>'francis',//ACTIVE DIRECTORY prefix
-    'adServer' => 'DC2SVR.AASCIENCES.AC.KE', //Active directory domain co
+    'ldPrefix'=>'',//ACTIVE DIRECTORY prefix
+    'adServer' => '', //Active directory domain co
 	
 	'codeUnits' => [
-        'CoopB2B'
+        'CreditPortalManagement'
 	],
 	'ServiceName' => [
-		'CoopB2B' => 'CoopB2B',		
+		'CreditPortalManagement' => 'CreditPortalManagement',		
     ],
 
     'AuthMode' => [

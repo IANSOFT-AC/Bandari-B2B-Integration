@@ -7,7 +7,7 @@ $this->title = Yii::$app->name;
 <div class="site-index">
 
     <div class="jumbotron text-center bg-transparent">
-        <h1 class="display-4">Welcome to Bandari Sacco - Coop Bank B2B Integration.</h1>
+        <h1 class="display-4">Welcome to Mhasibu Sacco - Coop Bank B2B Integration.</h1>
 
         <p class="lead"> A Sacco - Bank Business To Business Integration.</p>
 
