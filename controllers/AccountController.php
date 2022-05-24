@@ -13,6 +13,7 @@ use app\models\User;
 use yii\filters\auth\HttpBasicAuth;
 use yii\filters\ContentNegotiator;
 use yii\rest\Controller as RestController;
+use yii\web\HttpException;
 
 class AccountController extends RestController
 {
@@ -45,7 +46,7 @@ class AccountController extends RestController
                 ],
             ],
 
-            'basicAuth' => [
+            /* 'basicAuth' => [
                 'class' => HttpBasicAuth::class,
                 'auth' => function ($username, $password) {
                     if (Yii::$app->request->getBodyParam('header')['connectionID'] === 'bandari' && Yii::$app->request->getBodyParam('header')['connectionPassword'] == 'bandari123') {
@@ -54,7 +55,7 @@ class AccountController extends RestController
                         return null;
                     }
                 }
-            ],
+            ],*/
             'contentNegotiator' => [
                 'class' => ContentNegotiator::class,
                 'only' => ['index'],
@@ -81,46 +82,85 @@ class AccountController extends RestController
      */
     public function actionIndex()
     {
-        //$ConnectionID = Yii::$app->request->getBodyParam('header')['connectionID'];
-        //$ConnectionPassword = Yii::$app->request->getBodyParam('header')['connectionPassword'];
-        //$ConnectionPassword = Yii::$app->request->getBodyParam('request');
-
 
         $headers = Yii::$app->request->headers;
-        $params = Yii::$app->request->getBodyParam('TransactionReferenceCode');
-
-        // Fetch the user from Nav
-        $service = Yii::$app->params['ServiceName']['CoopB2B'];
-        $NavPayload = [
-            'transactionReferenceCode' => Yii::$app->request->getBodyParam('request')['TransactionReferenceCode'],
-            'transactionDate' => Yii::$app->request->getBodyParam('request')['TransactionDate'],
-            'accountNumber' => '',
-            'accountName' => '',
-            'institutionCode' => Yii::$app->request->getBodyParam('request')['InstitutionCode'],
-            'institutionName' => ''
-        ];
-        $member = Yii::$app->navhelper->Codeunit($service, $NavPayload, 'GetAccountValidation');
+        $params = Yii::$app->request->getBodyParams();
 
         /* print_r('<pre>');
-        print_r($member);
-        exit;*/
-        if (is_array($member) && $member['accountNumber']) {
-            return [
-                'TransactionReferenceCode' => Yii::$app->request->getBodyParam('TransactionReferenceCode'),
-                'TransactionDate' => Yii::$app->request->getBodyParam('TransactionDate'),
-                'TotalAmount' => '0.00',
-                'Currency' => '',
-                'AdditionalInfo' => '', //From Nav,
-                'AccountNumber' => $member['accountNumber'], //FROM NAV
-                'AccountName' => $member['accountName'], //FROM NAV
-                'InstitutionCode' => $member['institutionCode'], //
-                'InstitutionName' => $member['institutionName']
+        print_r($params);
+        exit('End');*/
+
+        if ($params['header']['connectionID'] == 'bandari' &&  $params['header']['connectionPassword'] == 'bandari123') {
+            // Fetch the user from Nav
+            $service = Yii::$app->params['ServiceName']['CoopB2B'];
+            $NavPayload = [
+                'transactionReferenceCode' => $params['request']['TransactionReferenceCode'],
+                'transactionDate' => $params['request']['TransactionDate'],
+                'accountNumber' => '',
+                'accountName' => '',
+                'institutionCode' => $params['request']['InstitutionCode'],
+                'institutionName' => ''
             ];
+            $member = Yii::$app->navhelper->Codeunit($service, $NavPayload, 'GetAccountValidation');
+
+
+            if (is_array($member) && $member['accountNumber']) {
+                return [
+                    'header' => [
+                        'messageID' =>  Yii::$app->security->generateRandomString(8),
+                        'statusCode' => 200,
+                        'statusDescription' => 'Successfully validated Member',
+                    ],
+                    'response' => [
+                        'TransactionReferenceCode' => $params['request']['TransactionReferenceCode'],
+                        'TransactionDate' => $params['request']['TransactionDate'],
+                        'TotalAmount' => '0.00',
+                        'Currency' => '',
+                        'AdditionalInfo' => '', //From Nav,
+                        'AccountNumber' => $member['accountNumber'], //FROM NAV
+                        'AccountName' => $member['accountName'], //FROM NAV
+                        'InstitutionCode' => $member['institutionCode'], //
+                        'InstitutionName' => $member['institutionName']
+                    ]
+                ];
+            } else {
+                return [
+                    'header' => [
+                        'messageID' =>  Yii::$app->security->generateRandomString(8),
+                        'statusCode' => 404,
+                        'statusDescription' => 'Cannot validate Member',
+                    ],
+                    'response' => [
+                        'TransactionReferenceCode' => $params['request']['TransactionReferenceCode'],
+                        'TransactionDate' => $params['request']['TransactionDate'],
+                        'TotalAmount' => '0.00',
+                        'Currency' => '',
+                        'AdditionalInfo' => '', //From Nav,
+                        'AccountNumber' => '', //FROM NAV
+                        'AccountName' => '', //FROM NAV
+                        'InstitutionCode' => '', //
+                        'InstitutionName' => ''
+                    ]
+                ];
+            }
         } else {
             return [
-                'Error' => true,
-                'Message' => 'Cannot Validate Account Details',
-                'response' => $member
+                'header' => [
+                    'messageID' =>  Yii::$app->security->generateRandomString(8),
+                    'statusCode' => 404,
+                    'statusDescription' => 'Successfully validated Member',
+                ],
+                'response' => [
+                    'TransactionReferenceCode' => $params['request']['TransactionReferenceCode'],
+                    'TransactionDate' => $params['request']['TransactionDate'],
+                    'TotalAmount' => '0.00',
+                    'Currency' => '',
+                    'AdditionalInfo' => '', //From Nav,
+                    'AccountNumber' => '', //FROM NAV
+                    'AccountName' => '', //FROM NAV
+                    'InstitutionCode' => '', //
+                    'InstitutionName' => ''
+                ]
             ];
         }
     }
