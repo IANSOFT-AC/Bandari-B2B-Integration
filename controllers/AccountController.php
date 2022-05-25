@@ -102,7 +102,7 @@ class AccountController extends RestController
 
 
             if (is_array($member) && $member['accountNumber']) {
-                return [
+                $response =  [
                     'header' => [
                         'messageID' =>  Yii::$app->security->generateRandomString(8),
                         'statusCode' => 200,
@@ -120,12 +120,15 @@ class AccountController extends RestController
                         'InstitutionName' => $member['institutionName']
                     ]
                 ];
+                //$this->logger($response, 'account');
+                Yii::$app->logger->log($response, 'account');
+                return $response;
             } else {
-                return [
+                $response =  [
                     'header' => [
                         'messageID' =>  Yii::$app->security->generateRandomString(8),
                         'statusCode' => 404,
-                        'statusDescription' => 'Cannot validate Member',
+                        'statusDescription' => 'Could not Validate  Member',
                     ],
                     'response' => [
                         'TransactionReferenceCode' => $params['request']['TransactionReferenceCode'],
@@ -136,16 +139,21 @@ class AccountController extends RestController
                         'AccountNumber' => '', //FROM NAV
                         'AccountName' => '', //FROM NAV
                         'InstitutionCode' => '', //
-                        'InstitutionName' => ''
+                        'InstitutionName' => '',
+                        'member' => $member
                     ]
                 ];
+
+                //$this->logger($response, 'account');
+                Yii::$app->logger->log($response, 'account');
+                return $response;
             }
         } else {
-            return [
+            $response = [
                 'header' => [
                     'messageID' =>  Yii::$app->security->generateRandomString(8),
-                    'statusCode' => 404,
-                    'statusDescription' => 'Successfully validated Member',
+                    'statusCode' => 401,
+                    'statusDescription' => 'Unauthorized.',
                 ],
                 'response' => [
                     'TransactionReferenceCode' => $params['request']['TransactionReferenceCode'],
@@ -156,9 +164,13 @@ class AccountController extends RestController
                     'AccountNumber' => '', //FROM NAV
                     'AccountName' => '', //FROM NAV
                     'InstitutionCode' => '', //
-                    'InstitutionName' => ''
+                    'InstitutionName' => '',
+                    'Error' => 'Unauthorized'
                 ]
             ];
+
+            Yii::$app->logger->log($response, 'account');
+            return $response;
         }
     }
 

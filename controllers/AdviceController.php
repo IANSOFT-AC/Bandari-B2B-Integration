@@ -111,21 +111,27 @@ class AdviceController extends RestController
             $advice = Yii::$app->navhelper->Codeunit($service, $payload, 'SendAccountPaymentAdvice');
 
             //return $payload;
-            return [
+            //$this->logger($advice, 'advice');
+            Yii::$app->logger->log($advice, 'advice');
+            //return $payload;
+            $response =  [
                 'header' => [
                     'messageID' =>  Yii::$app->security->generateRandomString(8),
                     'statusCode' => 200,
-                    'statusDescription' => 'Payment successfully received',
+                    'statusDescription' => 'Payment advice received successfully.',
                 ],
                 'response' => $advice
             ];
+
+            // $this->logger($advice, 'advice');
+            Yii::$app->logger->log($advice, 'advice');
+            return $response;
         } else {
-            //return new HttpException('401','Unauthorized'); 
-            return [
+            $response =  [
                 'header' => [
                     'messageID' =>  Yii::$app->security->generateRandomString(8),
-                    'statusCode' => 404,
-                    'statusDescription' => 'Payment successfully received',
+                    'statusCode' => 401,
+                    'statusDescription' => 'Unauthorized.',
                 ],
                 'response' => [
                     'transactionReferenceCode' => $params['request']['TransactionReferenceCode'],
@@ -146,6 +152,10 @@ class AdviceController extends RestController
                     'institutionName' => $params['request']['InstitutionName']
                 ]
             ];
+
+            //$this->logger($response, 'advice');
+            Yii::$app->logger->log($response, 'advice');
+            return $response;
         }
     }
 
