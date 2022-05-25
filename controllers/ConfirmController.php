@@ -123,8 +123,8 @@ class ConfirmController extends RestController
 
     public function formatDate($timestamp)
     {
-        return date('Y-m-d', $timestamp);
-        // return \DateTime::createFromFormat('U', $timestamp, new \DateTimeZone('UTC'));
+        list($date, $time) = explode('T', $timestamp);
+        return date('Y-m-d', strtotime($date));
     }
 
 

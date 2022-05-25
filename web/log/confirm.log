@@ -91,3 +91,38 @@ Array
     [transactionDate] => 1970-08-22
     [transactionID] => 1472
 )
+Array
+(
+    [AcctNo] => 01147846199500
+    [Amount] => 34000.0
+    [BookedBalance] => 1211987.18
+    [ClearedBalance] => 878645.18
+    [Currency] => KES
+    [CustMemoLine1] => LOCAL CHEQUE NO 000325 
+    [CustMemoLine2] =>  2121597
+    [CustMemoLine3] => 76
+    [EventType] => CREDIT
+    [ExchangeRate] => 
+    [Narration] => LOCAL CHEQUE NO 0003252121597 76
+    [PaymentRef] => SYBRIN0FEE4E466455F
+    [PostingDate] => 20220430
+    [ValueDate] => 20220505
+    [TransactionDate] => 2022-04-30T15:30:28.95+03:00
+    [TransactionId] => 11807a73758cO7QJ
+)
+Array
+(
+    [return_value] => {"Status":"0","Description":"IPN Received Successfully"}
+    [account] => 01147846199500
+    [amount] => 34000
+    [bookBalance] => 1211987.18
+    [clearedBalance] => 878645.18
+    [currency] => KES
+    [custMemoLine1] => LOCAL CHEQUE NO 000325
+    [eventType] => CREDIT
+    [exchangeRate] => 
+    [narration] => LOCAL CHEQUE NO 0003252121597 76
+    [paymentRef] => SYBRIN0FEE4E466455F
+    [transactionDate] => 2022-04-30
+    [transactionID] => 11807A73758CO7QJ
+)
