@@ -11,7 +11,7 @@ $config = [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
-        
+
     ],
     'components' => [
         'request' => [
@@ -50,23 +50,25 @@ $config = [
             ],
         ],
         'db' => $db,
-        
+
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => [
-            ],
+            'rules' => [],
         ],
 
-        
-		'navhelper' => [
+
+        'navhelper' => [
             'class' => 'app\Library\Navhelper'
         ],
 
         'navision' => [
             'class' => 'app\Library\Navision'
         ],
-        
+        'logger' => [
+            'class' => 'app\Library\Logger'
+        ],
+
     ],
     'params' => $params,
 ];

@@ -1,0 +1,31 @@
+Array
+(
+    [AcctNo] => 01113068718000
+    [Amount] => 2000
+    [BookedBalance] => 42.00
+    [ClearedBalance] => 42.00
+    [Currency] => KES
+    [CustMemoLine1] => 728210595 ABD01
+    [EventType] => DEBIT
+    [ExchangeRate] => 1
+    [Narration] => SCC/9171/2014#00011083|CASH:CASH|tcherutich
+    [PaymentRef] => SFI427E9136D7D3F21C2C89
+    [TransactionDate] => 20190301
+    [TransactionId] => 1472
+)
+Array
+(
+    [return_value] => {"Status":"0","Description":"IPN Received Successfully"}
+    [account] => 01113068718000
+    [amount] => 2000
+    [bookBalance] => 42
+    [clearedBalance] => 42
+    [currency] => KES
+    [custMemoLine1] => 728210595 ABD01
+    [eventType] => DEBIT
+    [exchangeRate] => 1
+    [narration] => SCC/9171/2014#00011083|CASH:CASH|TCHERUTICH
+    [paymentRef] => SFI427E9136D7D3F21C2C89
+    [transactionDate] => 1970-08-22
+    [transactionID] => 1472
+)

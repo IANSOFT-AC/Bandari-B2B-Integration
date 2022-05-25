@@ -86,8 +86,28 @@ class ConfirmController extends RestController
         $headers = Yii::$app->request->headers;
         $params = Yii::$app->request->getBodyParams();
 
-        // Do a nav payload
+        Yii::$app->logger->log($params, 'confirm');
 
+        // Do a nav payload
+        $service = Yii::$app->params['ServiceName']['CoopB2B'];
+        $payload = [
+            'account' => $params['AcctNo'],
+            'amount' => $params['Amount'],
+            'bookBalance' => $params['BookedBalance'],
+            'clearedBalance' => $params['ClearedBalance'],
+            'currency' => $params['Currency'],
+            'custMemoLine1' => $params['CustMemoLine1'],
+            'eventType' => $params['EventType'],
+            'exchangeRate' => $params['ExchangeRate'],
+            'narration' => $params['Narration'],
+            'paymentRef' => $params['PaymentRef'],
+            'transactionDate' => $this->formatDate($params['TransactionDate']),
+            'transactionID' => $params['TransactionId']
+        ];
+
+
+        $confirm = Yii::$app->navhelper->Codeunit($service, $payload, 'SendIPNNotification');
+        Yii::$app->logger->log($confirm, 'confirm');
 
         return [
             'MessageCode' => 200,
@@ -98,6 +118,12 @@ class ConfirmController extends RestController
     public function decode()
     {
         return Yii::$app->params['IntegrationUsername'] . ':' . Yii::$app->params['IntegrationPassword'];
+    }
+
+    public function formatDate($timestamp)
+    {
+        return date('Y-m-d', $timestamp);
+        // return \DateTime::createFromFormat('U', $timestamp, new \DateTimeZone('UTC'));
     }
 
 
