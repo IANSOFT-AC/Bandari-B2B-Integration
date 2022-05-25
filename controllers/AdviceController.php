@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\HttpException;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
@@ -13,7 +14,7 @@ use app\models\User;
 use yii\filters\auth\HttpBasicAuth;
 use yii\filters\ContentNegotiator;
 use yii\rest\Controller as RestController;
-use yii\web\HttpException;
+
 
 class AdviceController extends RestController
 {
@@ -48,10 +49,10 @@ class AdviceController extends RestController
 
             /* 'basicAuth' => [
                 'class' => HttpBasicAuth::class,
-                'auth' => function($username, $password) {
-                    if(Yii::$app->request->getBodyParam('header')['connectionID'] === 'bandari' && Yii::$app->request->getBodyParam('header')['connectionPassword'] == 'bandari123'){
+                'auth' => function ($username, $password) {
+                    if (Yii::$app->request->getBodyParam('header')['connectionID'] == 'bandari' && Yii::$app->request->getBodyParam('header')['connectionPassword'] == 'bandari123') {
                         return new User();
-                    }else{
+                    } else {
                         return null;
                     }
                 }
