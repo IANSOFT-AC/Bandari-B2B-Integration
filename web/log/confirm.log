@@ -1,0 +1,46 @@
+Array
+(
+    [NCBAPaymentNotificationResult] => Array
+        (
+            [Result] => Fail
+            [Error] => 
+        )
+
+)
+Array
+(
+    [NCBAPaymentNotificationResult] => Array
+        (
+            [Result] => Fail
+            [0] => 
+        )
+
+)
+Array
+(
+    [NCBAPaymentNotificationResult] => Array
+        (
+            [Result] => Fail
+            [Error] => 
+        )
+
+)
+Array
+(
+    [NCBAPaymentNotificationResult] => Array
+        (
+            [Result] => FAIL
+            [Error] => UnAuthorized
+        )
+
+)
+Array
+(
+    [NCBAPaymentNotificationResult] => Array
+        (
+            [Result] => Fail
+            [Error] => 
+            [time] => 2022-06-02 13:11:28
+        )
+
+)

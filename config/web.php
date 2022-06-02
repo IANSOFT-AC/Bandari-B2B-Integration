@@ -1,5 +1,7 @@
 <?php
 
+use yii\rest\UrlRule;
+
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
@@ -11,7 +13,7 @@ $config = [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
-        
+
     ],
     'components' => [
         'request' => [
@@ -19,8 +21,9 @@ $config = [
             'cookieValidationKey' => 'twEqOdEMgYkNRdRimTlz0cLwZfVrungE',
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
-                'application/xml' => 'jamguozhijun\yii\web\XmlParser'
-                //'application/xml' => 'yii\httpclient\XmlParser',
+                'application/xml' => 'jamguozhijun\yii\web\XmlParser',
+                'text/xml' => 'jamguozhijun\yii\web\XmlParser',
+                // 'application/xml' => 'yii\httpclient\XmlParser',
             ]
         ],
         'cache' => [
@@ -50,23 +53,30 @@ $config = [
             ],
         ],
         'db' => $db,
-        
+
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            //'enableStrictParsing' => true,
             'rules' => [
+                // [
+                //     'class' => UrlRule::class,
+                //     'controller' => [
+                //         'ncba'
+                //     ]
+                // ]
             ],
         ],
 
-        
-		'navhelper' => [
+
+        'navhelper' => [
             'class' => 'app\Library\Navhelper'
         ],
 
         'navision' => [
             'class' => 'app\Library\Navision'
         ],
-        
+
     ],
     'params' => $params,
 ];
